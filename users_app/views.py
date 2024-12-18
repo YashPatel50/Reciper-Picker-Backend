@@ -35,7 +35,6 @@ class RegisterView(APIView):
                 newUser.save()
 
 
-
         return Response(RegisterUserSerializer(newUser).data, status=status.HTTP_200_OK)
 
 
