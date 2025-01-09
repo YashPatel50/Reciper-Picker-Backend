@@ -14,7 +14,7 @@ class RegisterView(APIView):
     def get(self, request, format=None):
         queryset = User.objects.all()
 
-        return Response({'Testing'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Testing'}, status=status.HTTP_200_OK)
     
     def post(self, request, format=None):
 
@@ -23,8 +23,8 @@ class RegisterView(APIView):
         #Check if the request is valid
         if serializer.is_valid():
             #Gets the info from the serializer
-            new_username = serializer.data.get('username')
-            password = serializer.data.get('password')
+            new_username = serializer.validated_data.get('username')
+            password = serializer.validated_data.get('password')
 
             #Checks to see if user exists
             queryset = User.objects.filter(username=new_username)
@@ -33,6 +33,8 @@ class RegisterView(APIView):
             else:
                 newUser = User(username=new_username, password=password)
                 newUser.save()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
         return Response(RegisterUserSerializer(newUser).data, status=status.HTTP_200_OK)
