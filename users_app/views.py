@@ -31,7 +31,8 @@ class RegisterView(APIView):
             if queryset.exists():
                 return Response({'User exists'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                newUser = User(username=new_username, password=password)
+                newUser = User(username=new_username)
+                newUser.set_password(raw_password=password)
                 newUser.save()
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
