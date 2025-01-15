@@ -1,13 +1,29 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
 import bcrypt
 
 
 # Create your models here.
-class User(models.Model):
-    username = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
+class CustomeUserManager(UserManager):
+    def _create_user(self, username, password, **extra_fields):
+        if not username:
+            raise ValueError("No Valid Username")
+        
+        user = self.model(username=username)
+        user.set_password(password)
+        user.save(using=self._db)
 
-    def set_password(self, raw_password):
-        salt = bcrypt.gensalt()
-        self.password = bcrypt.hashpw(raw_password, salt)
+        return user
+    
+    def create_user(self, username, password, **extra_fields):
+        return self._create_user(username, password, **extra_fields)
+        
+
+    
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length=20, unique=True)
+
+    objects = CustomeUserManager()
+
+    USERNAME_FIELD = 'username'

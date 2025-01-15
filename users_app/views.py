@@ -13,8 +13,9 @@ class RegisterView(APIView):
     serializer_class = RegisterUserSerializer
     def get(self, request, format=None):
         queryset = User.objects.all()
-
-        return Response({'message': 'Testing'}, status=status.HTTP_200_OK)
+        
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, format=None):
 
