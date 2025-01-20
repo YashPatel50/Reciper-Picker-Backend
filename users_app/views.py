@@ -30,7 +30,7 @@ class RegisterView(APIView):
             #Checks to see if user exists
             queryset = User.objects.filter(username=new_username)
             if queryset.exists():
-                return Response({'User exists'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Conflict','message': 'User already exists'}, status=status.HTTP_409_CONFLICT)
             else:
                 newUser = User(username=new_username)
                 newUser.set_password(raw_password=password)
@@ -39,7 +39,7 @@ class RegisterView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-        return Response(RegisterUserSerializer(newUser).data, status=status.HTTP_200_OK)
+        return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
 
 
 
